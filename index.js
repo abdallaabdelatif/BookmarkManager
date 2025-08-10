@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const userRoutes = require("./Routes/users.route");
 
 const app = express();
 
@@ -9,6 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 dotenv.config();
+app.use("/users", userRoutes);
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/BookmarkManager")
