@@ -13,11 +13,11 @@ dotenv.config();
 app.use("/users", userRoutes);
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/BookmarkManager")
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to the DB Successfully."))
   .catch((error) => console.log("Connection Failed."));
 
-const port = 3333;
+const port = process.env.PORT || 3333;
 app.listen(port, () => {
   console.log(`Server started listening on port: => ${port}`);
 });
