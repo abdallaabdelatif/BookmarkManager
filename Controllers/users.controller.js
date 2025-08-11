@@ -11,7 +11,8 @@ exports.register = async (req, res) => {
 
     // Check if user exists
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "User already exists" });
+    if (existingUser)
+      return res.status(400).json({ message: "User already exists" });
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -20,7 +21,7 @@ exports.register = async (req, res) => {
     const newUser = await User.create({
       username,
       email,
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     res.status(201).json({ message: "User registered", user: newUser });
@@ -31,19 +32,20 @@ exports.register = async (req, res) => {
 
 // Login
 exports.login = async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const { email, password } = req.body;
-
     // Find user
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email });
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
     // Check password
-    const match = await bcrypt.compare(password, user.password);
+    let match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(400).json({ message: "Invalid credentials" });
 
     // Create token
-    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
+    let token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
     res.json({ message: "Login successful", token });
   } catch (err) {
